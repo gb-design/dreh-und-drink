@@ -71,6 +71,21 @@ body {
     0 0 0 1px rgba(255, 255, 255, 0.04) inset;
 }
 
+.bottom-fade {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 10%; /* unteres Drittel */
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.85) 0%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  z-index: 2000; /* über allem sichtbar */
+  pointer-events: none; /* nicht klickbar */
+}
+
 /* Fallbacks für Browser ohne 100dvh */
 @supports (height: 100svh) {
   .app {
@@ -117,6 +132,8 @@ body {
 .title-wrap {
   margin: 0 auto;
   display: flex;
+  position: relative;
+  z-index: 20;
   align-items: center;
   flex-direction: column;
   padding-top: 2rem;
@@ -146,7 +163,8 @@ h1 {
 
 /* Rad – größer als App-Breite, höher positioniert (wie im Mock) */
 .wheel-wrap {
-  position: absolute;
+  position: relative;
+  z-index: 1;
   left: 50%;
   top: calc(var(--w) * 0.15); /* vertikale Lage des Rades */
   width: calc(var(--w) * 1.58); /* deutlicher Überlauf seitlich */
@@ -193,6 +211,7 @@ h1 {
 /* Controls */
 .controls {
   position: absolute;
+  z-index: 5;
   left: 50%;
   top: calc(var(--w) * 0.7); /* SPIN überlappt das Rad */
   transform: translateX(-50%);
@@ -216,6 +235,34 @@ h1 {
   opacity: 0.6;
   pointer-events: none;
 }
+
+/* Wenn Bounce gestartet wird */
+.btn.is-bouncing {
+  animation: btn-bounce 0.6s cubic-bezier(0.28, 0.84, 0.42, 1);
+}
+
+/* Keyframes für "Drücken + Nachfedern" */
+@keyframes btn-bounce {
+  0% {
+    transform: scale(1);
+  }
+  25% {
+    transform: scale(0.9);
+  } /* gedrückt */
+  50% {
+    transform: scale(1.08);
+  } /* Überschwingen */
+  70% {
+    transform: scale(0.95);
+  } /* zurück kleiner */
+  85% {
+    transform: scale(1.03);
+  } /* nochmal leicht größer */
+  100% {
+    transform: scale(1);
+  } /* normal */
+}
+
 .spin img {
   width: calc(var(--w) * 0.48);
 } /* groß & präsent */
@@ -379,4 +426,86 @@ svg {
   max-width: 100%;
   height: auto;
   object-fit: contain;
+}
+
+/* kleiner Ghost-Button unter dem Titel */
+/* .stats-btn {
+  appearance: none;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: #cfd6e6;
+  font-weight: 600;
+  padding: 8px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.12s;
+  margin: 6px 0 0 0;
+}
+.stats-btn:active {
+  transform: scale(0.98);
+}
+.stats-btn:hover {
+  background: rgba(255, 255, 255, 0.06);
+} */
+
+/* Stats-Modal Inhalt */
+.stats-card .stats-body {
+  display: grid;
+  gap: 10px;
+  margin: 10px 0 16px;
+  text-align: left;
+}
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 6px 12px;
+  align-items: center;
+}
+.stats-label {
+  color: #a7aec0;
+}
+.stats-val {
+  font-weight: 700;
+  color: #edeef5;
+}
+.stats-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+/* .stats-btn.is-disabled {
+  opacity: 0.5;
+  pointer-events: none;
+} */
+
+.stats-emoji {
+  cursor: pointer;
+  display: inline-block;
+  user-select: none;
+  margin-left: 4px;
+  user-select: none;
+  transition: transform 0.15s;
+}
+
+.stats-emoji:active {
+  transform: scale(0.96);
+}
+
+.stats-emoji:focus {
+  outline: none; /* kein Fokusrahmen */
+  box-shadow: none; /* kein Schatten */
+}
+
+.stats-emoji:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+
+.stats-emoji:hover {
+  transform: scale(1.15);
+}
+.stats-emoji.is-disabled {
+  opacity: 0.5;
+  pointer-events: none;
 }

@@ -17,6 +17,7 @@
   <body>
     <!-- Desktop: Phone-Frame in der Mitte -->
     <div class="app">
+      <div class="bottom-fade"></div>
       <div class="bg-orbs" aria-hidden="true">
         <span class="orb orb--purple"></span>
         <span class="orb orb--teal"></span>
@@ -30,6 +31,7 @@
         <div class="title-wrap">
           <h1>Dreh & Drink</h1>
           <p>Das Bräuti-GAME 🕹️</p>
+
           <!-- <img
             class="title"
             src="assets/title.png"
@@ -51,7 +53,6 @@
               alt=""
               aria-hidden="true"
             />
-            <div class="shadow"></div>
           </div>
 
           <div class="controls">
@@ -72,7 +73,18 @@
       </main>
 
       <footer class="foot"></footer>
-
+      <dialog id="statsModal">
+        <div class="card stats-card">
+          <h2>Übersicht</h2>
+          <div id="statsBody" class="stats-body"></div>
+          <div class="stats-actions">
+            <button id="statsReset" class="ok" type="button">
+              Zurücksetzen
+            </button>
+            <button id="statsClose" class="ok" type="button">Schließen</button>
+          </div>
+        </div>
+      </dialog>
       <dialog id="result">
         <div class="card">
           <h2 id="resultTitle">Aktion</h2>
