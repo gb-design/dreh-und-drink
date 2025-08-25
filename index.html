@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+
+    <title>Dreh & Trink – Das Bräuti-Game</title>
+    <meta
+      name="description"
+      content="Mobiles Glücksrad für den Junggesellenabschied – spin & win!"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <!-- Desktop: Phone-Frame in der Mitte -->
+    <div class="app">
+      <div class="bg-orbs" aria-hidden="true">
+        <span class="orb orb--purple"></span>
+        <span class="orb orb--teal"></span>
+        <span class="orb orb--blue"></span>
+      </div>
+      <header class="top">
+        <img class="deco" src="assets/deco-top.png" alt="" />
+      </header>
+
+      <main class="content">
+        <div class="title-wrap">
+          <h1>Dreh & Drink</h1>
+          <p>Das Bräuti-GAME 🕹️</p>
+          <!-- <img
+            class="title"
+            src="assets/title.png"
+            alt="Dreh & Drink – Das Bräuti-Game"
+          /> -->
+        </div>
+
+        <section class="stage">
+          <div class="wheel-wrap">
+            <img
+              id="wheel"
+              class="wheel"
+              src="assets/wheel.png"
+              alt="Glücksrad"
+            />
+            <img
+              class="marker"
+              src="assets/marker.png"
+              alt=""
+              aria-hidden="true"
+            />
+            <div class="shadow"></div>
+          </div>
+
+          <div class="controls">
+            <button id="btnSpin" class="btn spin" aria-label="Drehen">
+              <img src="assets/spin-button.png" alt="SPIN" />
+            </button>
+
+            <button
+              id="btnRestart"
+              class="btn restart"
+              aria-label="Neustart"
+              disabled
+            >
+              <img src="assets/restart-button.png" alt="RESTART" />
+            </button>
+          </div>
+        </section>
+      </main>
+
+      <footer class="foot"></footer>
+
+      <dialog id="result">
+        <div class="card">
+          <h2 id="resultTitle">Aktion</h2>
+          <p id="resultText"></p>
+          <button id="resultClose" class="ok">Weiter</button>
+        </div>
+      </dialog>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,382 @@
+/* =========================
+   Dreh & Trink – styles.css
+   Referenz: 430 × 932 (Final Screen)
+   Mobile-safe: 100dvh/svh + Safe-Area + no-bounce
+   ========================= */
+
+@import url("https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&display=swap");
+
+:root {
+  --ink: #edeef5;
+  --muted: #a7aec0;
+  --radius: 22px;
+
+  /* Safe-Area */
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+}
+
+/* Global reset / mobile behavior */
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overscroll-behavior: none; /* kein Rubber-Band-Scroll */
+  background: #0a0c10; /* dunkler Seitenhintergrund */
+  color: var(--ink);
+  font-family: "Fredoka", system-ui, -apple-system, Segoe UI, Roboto, Ubuntu,
+    "Helvetica Neue", sans-serif;
+}
+
+/* Seite nicht scrollen, App rendert alles intern */
+body {
+  overflow: hidden;
+  display: grid;
+  place-items: center; /* Phone-Frame mittig auf Desktop */
+  -webkit-text-size-adjust: 100%; /* iOS: keine Schriftvergrößerung beim Rotieren */
+}
+
+/* Phone-Frame / App-Fläche
+   -> 100dvh; Fallbacks: 100svh bzw. 100vh, zzgl. Safe-Area */
+.app {
+  --w: min(100vw, 430px);
+
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  max-width: 430px;
+  height: 100dvh;
+  min-height: 100dvh;
+  padding: var(--safe-top) var(--safe-right) var(--safe-bottom) var(--safe-left);
+  overflow: hidden;
+  border-radius: 28px;
+
+  background: radial-gradient(
+    120% 120% at 50% 10%,
+    #1a2230 0%,
+    #10141a 52%,
+    #0b0d10 100%
+  );
+  display: flex;
+  flex-direction: column;
+
+  box-shadow: 0 40px 80px rgba(0, 0, 0, 0.55),
+    0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+}
+
+/* Fallbacks für Browser ohne 100dvh */
+@supports (height: 100svh) {
+  .app {
+    height: 100svh;
+    min-height: 100svh;
+  }
+}
+@supports not (height: 100dvh) {
+  .app {
+    height: 100vh;
+    min-height: 100vh;
+  }
+}
+
+/* Auf sehr kleinen Bildschirmen den Rahmen „entkanten“ */
+@media (max-width: 480px) {
+  .app {
+    max-width: none;
+    border-radius: 0;
+    box-shadow: none;
+  }
+}
+
+/* Top Deko */
+.top {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+.deco {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Content */
+.content {
+  flex: 1;
+  padding: 8px 16px 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.title-wrap {
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  padding-top: 2rem;
+
+  & p {
+    font-size: 1.25rem;
+    line-height: 2;
+    margin: 0;
+  }
+}
+h1 {
+  font-size: 3rem;
+  line-height: 1.1;
+  background: linear-gradient(to bottom right, #ffffff 0%, #00c3ff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+  margin: 0;
+}
+
+/* Bühne */
+.stage {
+  position: relative;
+  flex: 1;
+}
+
+/* Rad – größer als App-Breite, höher positioniert (wie im Mock) */
+.wheel-wrap {
+  position: absolute;
+  left: 50%;
+  top: calc(var(--w) * 0.15); /* vertikale Lage des Rades */
+  width: calc(var(--w) * 1.58); /* deutlicher Überlauf seitlich */
+  aspect-ratio: 1/1;
+  transform: translateX(-50%);
+  display: grid;
+  place-items: center;
+}
+.wheel {
+  width: 100%;
+  height: auto;
+  display: block;
+  transform-origin: center;
+  will-change: transform;
+  backface-visibility: hidden;
+  filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.4)); /* leichterer Shadow */
+}
+
+/* Marker mittig mit Glow */
+.marker {
+  position: absolute;
+  width: calc(var(--w) * 0.25);
+  top: calc(var(--w) * -0.15); /* minimal oberhalb der Radkante */
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 4;
+  filter: drop-shadow(0 7px 18px rgba(249, 73, 255, 0.45));
+}
+
+/* Bodenschatten unter dem Rad */
+.shadow {
+  position: absolute;
+  inset: auto calc(var(--w) * 0.1) calc(var(--w) * -0.06) calc(var(--w) * 0.1);
+  height: calc(var(--w) * 0.22);
+  border-radius: 50%;
+  background: radial-gradient(
+    closest-side,
+    rgba(0, 0, 0, 0.6),
+    transparent 72%
+  );
+  z-index: 0;
+}
+
+/* Controls */
+.controls {
+  position: absolute;
+  left: 50%;
+  top: calc(var(--w) * 0.7); /* SPIN überlappt das Rad */
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(var(--w) * 0.036);
+}
+.btn {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  transition: transform 0.12s;
+}
+.btn:active {
+  transform: scale(0.98);
+}
+.btn[disabled] {
+  opacity: 0.6;
+  pointer-events: none;
+}
+.spin img {
+  width: calc(var(--w) * 0.48);
+} /* groß & präsent */
+.restart img {
+  width: calc(var(--w) * 0.32);
+} /* kompakter Button */
+
+/* Disclaimer */
+.disclaimer {
+  position: absolute;
+  left: 50%;
+  bottom: calc(var(--w) * 0.1);
+  transform: translateX(-50%);
+  color: var(--muted);
+  font-size: calc(var(--w) * 0.034);
+  text-align: center;
+  pointer-events: none;
+}
+.foot {
+  padding: 0 16px 12px;
+  color: #7f8aa3;
+}
+
+/* Dialog */
+dialog {
+  position: fixed;
+  inset: 0;
+  border: 0;
+  padding: 0;
+  background: transparent;
+}
+dialog::backdrop {
+  background: rgba(0, 0, 0, 0.55);
+}
+
+.card {
+  background: linear-gradient(180deg, #171c25, #0e1116);
+  text-align: center;
+  position: relative;
+  z-index: 1001;
+  color: var(--ink);
+  position: relative;
+  border-radius: var(--radius);
+  padding: 20px 16px;
+  width: min(90vw, 420px);
+  margin: auto;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.55),
+    0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+}
+.card h2 {
+  margin: 0 0 8px;
+  font-size: 1.3rem;
+}
+.card p {
+  margin: 0 0 14px;
+  color: #cfd6e6;
+}
+
+.confetti-canvas {
+  position: fixed; /* viewportweit, nicht geclipped */
+  inset: 0;
+  z-index: 1002; /* über der Card, unter dem Button */
+  pointer-events: none;
+}
+
+.ok {
+  appearance: none;
+  border: 0;
+  background: linear-gradient(180deg, #b75cff, #8a53ff);
+  color: #fff;
+  font-weight: 700;
+  padding: 12px 16px;
+  border-radius: 999px;
+  cursor: pointer;
+  position: relative;
+  z-index: 1003;
+}
+
+/* -------------------------
+   Hintergrund-Orbs (blurred)
+   ------------------------- */
+
+.bg-orbs {
+  position: absolute;
+  inset: -12%; /* etwas größer, damit beim Rotieren nichts clippt */
+  z-index: -1; /* hinter dem UI */
+  filter: blur(100px); /* gewünschter Blur auf der gesamten Gruppe */
+  pointer-events: none;
+  transform-origin: 50% 60%;
+  animation: orbs-rotate 10s linear infinite; /* sehr dezent, endlos */
+}
+.bg-orbs .orb {
+  position: absolute;
+  width: 70vmin;
+  height: 70vmin;
+  border-radius: 50%;
+  opacity: 0.9;
+  transform: translate(-50%, -50%);
+  will-change: transform;
+}
+/* Farben aus deinem Bild */
+.orb--purple {
+  left: 25%;
+  top: 72%;
+  background: radial-gradient(
+    closest-side,
+    #7d2ce6 0%,
+    #6a28e4 35%,
+    #5a20cc 65%,
+    rgba(90, 32, 204, 0) 100%
+  );
+}
+.orb--teal {
+  right: 5%;
+  top: 22%;
+  width: 52vmin;
+  height: 52vmin;
+  background: radial-gradient(
+    closest-side,
+    #18e0b8 0%,
+    #12caa6 35%,
+    #0ca78b 65%,
+    rgba(12, 167, 139, 0) 100%
+  );
+}
+.orb--blue {
+  right: 20%;
+  bottom: -5%;
+  width: 56vmin;
+  height: 56vmin;
+  background: radial-gradient(
+    closest-side,
+    #2aa5ff 0%,
+    #1e8cf0 35%,
+    #186fca 65%,
+    rgba(24, 111, 202, 0) 100%
+  );
+}
+@keyframes orbs-rotate {
+  0% {
+    transform: rotate(0deg) scale(1);
+  }
+  50% {
+    transform: rotate(180deg) scale(1.02);
+  }
+  100% {
+    transform: rotate(360deg) scale(1);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bg-orbs {
+    animation: none;
+  }
+}
+
+/* Medien, Bilder, SVGs nie verzerren */
+img,
+canvas,
+svg {
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+}
