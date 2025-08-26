@@ -24,7 +24,7 @@ const sectorDefs = {
   panto: {
     id: "panto",
     label: "Pantomime 🙌",
-    desc: "Begriffe pantomimisch darstellen. Crew rät. Sieger bekommt einen Shot.",
+    desc: "Begriffe pantomimisch darstellen. Jeder darf raten. Sieger bekommt einen Shot.",
   },
   crew: {
     id: "crew",
@@ -251,6 +251,32 @@ const QUIZ_QUESTIONS = [
     a: ["Fernbedienung", "Zahnbürste", "Stille Behandlung"],
     correct: 0,
   },
+];
+
+// ==============================
+// PANTOMIME: Begriffe (Zufall)
+// ==============================
+const pantomimeWords = [
+  "Brautstrauß werfen",
+  "Schleier lüften",
+  "Kuss vor dem Altar",
+  "Ring anstecken",
+  "Hochzeitstorte anschneiden",
+  "Brautkleid anprobieren",
+  "Ja-Wort geben",
+  "Tanz des Brautpaares",
+  "Hochzeitsrede halten",
+  "Reis werfen",
+  "Polterabend – Teller zerschlagen",
+  "Hochzeitsfoto knipsen",
+  "Brautentführung",
+  "Eheversprechen ablesen",
+  "Schleifen binden am Auto",
+  "Kutsche fahren",
+  "Flitterwochen am Strand",
+  "Streit ums Badezimmer",
+  "Gemeinsam IKEA-Schrank aufbauen",
+  "Schwiegermutter begrüßen",
 ];
 
 // 3.2 DOM-Referenzen
@@ -845,13 +871,52 @@ function openResultForTarget() {
   const s = sectorDefs[key];
   resultTitle.textContent = s.label;
   resultText.textContent = s.desc;
+
+  // Default: "Weiter"-Button anzeigen
+  resultClose.style.display = "inline-block";
+  resultClose.textContent = "Weiter";
+
+  // Wenn Ehe-Quiz
+  if (key === "quiz" || key === "quiz2") {
+    const quizBtn = document.createElement("button");
+    quizBtn.textContent = "Zu den Fragen";
+    quizBtn.className = "ok";
+    quizBtn.addEventListener("click", () => {
+      dialogEl.close();
+      startEheQuiz(); // deine bestehende Quiz-Logik
+    });
+    resultText.appendChild(document.createElement("br"));
+    resultText.appendChild(quizBtn);
+    resultClose.style.display = "none"; // Weiter ausblenden
+  }
+
+  // Wenn Pantomime
+  if (key === "panto" || key === "panto2") {
+    const startBtn = document.createElement("button");
+    startBtn.textContent = "Start";
+    startBtn.className = "ok";
+    startBtn.addEventListener("click", () => {
+      // Neuen Begriff zufällig wählen
+      const randomWord =
+        pantomimeWords[Math.floor(Math.random() * pantomimeWords.length)];
+
+      // Text im Dialog ersetzen
+      resultTitle.textContent = "Dein Pantomime-Begriff 🎭";
+      resultText.textContent = randomWord;
+
+      // Nur noch "Weiter"-Button unten behalten
+      resultClose.style.display = "inline-block";
+      resultClose.textContent = "Fertig";
+    });
+    resultText.appendChild(document.createElement("br"));
+    resultText.appendChild(startBtn);
+    resultClose.style.display = "none"; // erst mal ausblenden
+  }
+
   dialogEl.showModal();
 
-  // Count exakt EINMAL hier
+  // Zähler für Stats
   stats.record(s.id);
-
-  // Spin ist fertig -> Stats-Emoji freigeben
-  setStatsEnabled(true);
 }
 
 // ----------------------------------------------------

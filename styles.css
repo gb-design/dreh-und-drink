@@ -331,6 +331,7 @@ dialog::backdrop {
 
 .ok {
   appearance: none;
+  margin-top: 16px;
   border: 0;
   background: linear-gradient(180deg, #b75cff, #8a53ff);
   color: #fff;
