@@ -34,7 +34,7 @@ const sectorDefs = {
   sps2: {
     id: "sps2",
     label: "S-P-S ✊✋✌️",
-    desc: "Nochmals Stein-Papier-Schere – 3 Runden. Sieger trinkt.",
+    desc: "Stein-Papier-Schere – 3 Runden. Sieger trinkt.",
   },
   quiz2: {
     id: "quiz2",
@@ -44,7 +44,7 @@ const sectorDefs = {
   panto2: {
     id: "panto2",
     label: "Pantomime 🙌",
-    desc: "Nochmals Pantomime. Sieger bekommt einen Shot.",
+    desc: "Begriffe pantomimisch darstellen. Sieger bekommt einen Shot.",
   },
 };
 
