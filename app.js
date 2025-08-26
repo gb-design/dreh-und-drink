@@ -461,71 +461,6 @@ function startQuiz3() {
   quizDialog.showModal();
 }
 
-// ==============================
-// Einbindung in dein bestehendes Ergebnis-Dialog
-// ==============================
-
-// Wir erweitern den bestehenden Ergebnis-Dialog um einen zweiten Button „Zu den Fragen“,
-// aber NUR wenn der Sektor quiz/quiz2 ist. Sonst bleibt alles wie gehabt.
-
-const toQuizBtnId = "toQuizBtn";
-function ensureQuizButton() {
-  let btn = document.getElementById(toQuizBtnId);
-  if (!btn) {
-    btn = document.createElement("button");
-    btn.id = toQuizBtnId;
-    btn.className = "ok"; // gleicher Look wie „Weiter“
-    btn.style.marginTop = "8px";
-    btn.textContent = "Zu den Fragen";
-    // Button in die bestehende Card einsetzen (unter deinen Text, vor dem Weiter-Button)
-    const card = dialogEl?.querySelector(".card");
-    const p = dialogEl?.querySelector(".card p");
-    if (card && p) card.insertBefore(btn, p.nextSibling);
-    else if (card) card.appendChild(btn);
-
-    btn.addEventListener("click", (e) => {
-      e.preventDefault();
-      // Ergebnis-Dialog zu, Quiz-Dialog auf
-      dialogEl.close();
-      startQuiz3();
-    });
-  }
-  return btn;
-}
-
-// falls vom letzten Mal noch offen – nie „ins Ergebnis springen“
-try {
-  if (quizDialog?.open) quizDialog.close();
-} catch {}
-resetQuizUI(); // UI neutral halten, damit beim nächsten Start nix „vorgefüllt“ ist
-
-// Hook in deine bestehende Funktion:
-const _openResultForTarget = openResultForTarget; // falls vorhanden, sonst einfach ersetzen
-function openResultForTargetPatched() {
-  // rufe deine originale Logik auf (Titel, Text, showModal, Stats, etc.)
-  _openResultForTarget();
-
-  // Prüfen, ob das Ergebnis-Label einem Quiz-Feld entspricht
-  const key = wedgeOrder[lastTargetWedge];
-  const isQuiz = key === "quiz" || key === "quiz2";
-  const btn = ensureQuizButton();
-
-  // Quiz-Button nur bei Quiz-Feldern zeigen
-  if (isQuiz) {
-    btn.style.display = "inline-block";
-  } else {
-    btn.style.display = "none";
-  }
-}
-
-// Nimm den Patch als neue Funktion in Gebrauch:
-if (typeof _openResultForTarget === "function") {
-  openResultForTarget = openResultForTargetPatched;
-} else {
-  // falls es keinen Wrapper gibt (unerwartet), setze direkt:
-  openResultForTarget = openResultForTargetPatched;
-}
-
 // ----------------------------------------------------
 // State & Mathe
 // ----------------------------------------------------
@@ -869,54 +804,84 @@ function setStatsEnabled(/* enabled */) {
 function openResultForTarget() {
   const key = wedgeOrder[lastTargetWedge];
   const s = sectorDefs[key];
-  resultTitle.textContent = s.label;
-  resultText.textContent = s.desc;
 
-  // Default: "Weiter"-Button anzeigen
+  // Falls der Dialog noch offen ist, schließen (verhindert „doppeltes Befüllen“)
+  try {
+    if (dialogEl.open) dialogEl.close();
+  } catch {}
+
+  // Titel setzen
+  resultTitle.textContent = s.label;
+
+  // Inhalt HART zurücksetzen und Grundtext einsetzen
+  const p = document.createElement("p");
+  p.textContent = s.desc;
+  resultText.replaceChildren(p); // <<< leert ALLE Kinder zuverlässig
+
+  // Standard: Weiter-Button sichtbar
   resultClose.style.display = "inline-block";
   resultClose.textContent = "Weiter";
 
-  // Wenn Ehe-Quiz
+  // --- Ehe-Quiz: „Zu den Fragen“ statt „Weiter“ ---
   if (key === "quiz" || key === "quiz2") {
-    const quizBtn = document.createElement("button");
-    quizBtn.textContent = "Zu den Fragen";
-    quizBtn.className = "ok";
-    quizBtn.addEventListener("click", () => {
+    // Ensure resultClose is visible and labeled "Weiter"
+    resultClose.style.display = "inline-block";
+    resultClose.textContent = "Weiter";
+
+    // Remove any previous goQuizBtn
+    const oldQuizBtn = document.getElementById("goQuizBtn");
+    if (oldQuizBtn && oldQuizBtn.parentNode)
+      oldQuizBtn.parentNode.removeChild(oldQuizBtn);
+
+    // Create and append the "Zu den Fragen" button
+    const btn = document.createElement("button");
+    btn.id = "goQuizBtn";
+    btn.className = "ok";
+    btn.textContent = "Zu den Fragen";
+    btn.onclick = (e) => {
+      e.preventDefault();
       dialogEl.close();
-      startEheQuiz(); // deine bestehende Quiz-Logik
-    });
-    resultText.appendChild(document.createElement("br"));
-    resultText.appendChild(quizBtn);
-    resultClose.style.display = "none"; // Weiter ausblenden
+      startQuiz3();
+    };
+    resultText.appendChild(btn);
   }
 
-  // Wenn Pantomime
+  // --- Pantomime: „Start“ statt „Weiter“ ---
   if (key === "panto" || key === "panto2") {
-    const startBtn = document.createElement("button");
-    startBtn.textContent = "Start";
-    startBtn.className = "ok";
-    startBtn.addEventListener("click", () => {
-      // Neuen Begriff zufällig wählen
-      const randomWord =
+    // Remove any previous startPantoBtn
+    const oldPantoBtn = document.getElementById("startPantoBtn");
+    if (oldPantoBtn && oldPantoBtn.parentNode)
+      oldPantoBtn.parentNode.removeChild(oldPantoBtn);
+
+    resultClose.style.display = "none"; // Weiter ausblenden
+
+    let btn = document.createElement("button");
+    btn.id = "startPantoBtn";
+    btn.className = "ok";
+    btn.textContent = "Start";
+    btn.onclick = () => {
+      // Zufallsbegriff anzeigen
+      const word =
         pantomimeWords[Math.floor(Math.random() * pantomimeWords.length)];
-
-      // Text im Dialog ersetzen
       resultTitle.textContent = "Dein Pantomime-Begriff 🎭";
-      resultText.textContent = randomWord;
 
-      // Nur noch "Weiter"-Button unten behalten
+      const txt = document.createElement("p");
+      txt.textContent = word;
+      resultText.replaceChildren(txt); // nur den Begriff zeigen
+
       resultClose.style.display = "inline-block";
       resultClose.textContent = "Fertig";
-    });
-    resultText.appendChild(document.createElement("br"));
-    resultText.appendChild(startBtn);
-    resultClose.style.display = "none"; // erst mal ausblenden
+    };
+
+    resultText.appendChild(btn);
   }
 
   dialogEl.showModal();
 
-  // Zähler für Stats
-  stats.record(s.id);
+  // Zählen (nur einmal pro Ergebnis)
+  try {
+    stats.record(s.id);
+  } catch {}
 }
 
 // ----------------------------------------------------
