@@ -92,7 +92,7 @@ body {
 }
 
 /* Fallbacks für Browser ohne 100dvh */
-/* @supports (height: 100svh) {
+@supports (height: 100svh) {
   .app {
     height: 100svh;
     min-height: 100svh;
@@ -103,7 +103,7 @@ body {
     height: 100vh;
     min-height: 100vh;
   }
-} */
+}
 
 /* Auf sehr kleinen Bildschirmen den Rahmen „entkanten“ */
 @media (max-width: 480px) {
