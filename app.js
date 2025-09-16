@@ -805,7 +805,16 @@ function openResultForTarget() {
   const key = wedgeOrder[lastTargetWedge];
   const s = sectorDefs[key];
 
+  // Google Analytics: Ergebnis-Event
+  try {
+    gtag("event", "spin_result", {
+      result: key,
+      result_label: s.label,
+    });
+  } catch {}
+
   // Falls der Dialog noch offen ist, schließen (verhindert „doppeltes Befüllen“)
+
   try {
     if (dialogEl.open) dialogEl.close();
   } catch {}
@@ -929,21 +938,22 @@ async function startSpin() {
 // ----------------------------------------------------
 // Events
 // ----------------------------------------------------
-btnSpin.addEventListener("click", startSpin);
+// btnSpin.addEventListener("click", startSpin);
 btnSpin.addEventListener("click", () => {
-  // Animation-Klasse hinzufügen
-  btnSpin.classList.add("is-bouncing");
+  // A) Google Analytics: Spin-Start zählen
+  try {
+    gtag("event", "spin_start", { method: "button" });
+  } catch {}
 
-  // Nach Ende der Animation wieder entfernen (damit sie erneut triggerbar ist)
+  // B) Button-Animation
+  btnSpin.classList.add("is-bouncing");
   btnSpin.addEventListener(
     "animationend",
-    () => {
-      btnSpin.classList.remove("is-bouncing");
-    },
+    () => btnSpin.classList.remove("is-bouncing"),
     { once: true }
   );
 
-  // Dein Spin starten
+  // C) Spin nur EINMAL starten
   startSpin();
 });
 
