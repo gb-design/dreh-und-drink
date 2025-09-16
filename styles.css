@@ -95,7 +95,7 @@ body {
 @supports (height: 100svh) {
   .app {
     height: 100svh;
-    min-height: 100svh;
+    max-height: 960px;
   }
 }
 @supports not (height: 100dvh) {
